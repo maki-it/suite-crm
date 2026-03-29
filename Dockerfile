@@ -3,6 +3,7 @@ FROM php:8.3-apache
 
 # https://github.com/SuiteCRM/SuiteCRM-Core/releases
 ARG SUITECRM_VERSION=8.9.3
+ARG APPDIR=/opt/suitecrm
 ARG WEBROOT=/var/www/html
 
 RUN apt-get update && \
@@ -26,10 +27,10 @@ RUN curl -fsSL -o /usr/local/bin/install-php-extensions https://github.com/mloca
         xdebug \
         zip
 
-WORKDIR ${WEBROOT}
+WORKDIR ${APPDIR}
 
 RUN curl -L -o suitecrm.zip https://github.com/SuiteCRM/SuiteCRM-Core/releases/download/v${SUITECRM_VERSION}/SuiteCRM-${SUITECRM_VERSION}.zip && \
-    unzip suitecrm.zip -d ${WEBROOT}/ && \
+    unzip suitecrm.zip -d ${APPDIR}/ && \
     rm suitecrm.zip && \
     find . -type d -not -perm 2755 -exec chmod 2755 {} \; && \
     find . -type f -not -perm 0644 -exec chmod 0644 {} \; && \
@@ -46,7 +47,10 @@ COPY scripts/entrypoint.sh /
 
 ENTRYPOINT ["bash", "/entrypoint.sh"]
 
+WORKDIR ${WEBROOT}
 VOLUME ${WEBROOT}
+
+ENV SUITECRM_VERSION=${SUITECRM_VERSION}
 
 EXPOSE 80
 
