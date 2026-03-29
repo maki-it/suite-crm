@@ -1,0 +1,24 @@
+services:
+  app:
+    build: .
+    pull_policy: build
+    ports:
+      - "80:80"
+    environment:
+      TZ: Europe/Berlin
+    depends_on:
+      - db
+  db:
+    image: mariadb:latest
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "true"
+      MYSQL_USER: suitecrm
+      MYSQL_PASSWORD: suitecrm
+      MYSQL_DATABASE: suitecrm
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
