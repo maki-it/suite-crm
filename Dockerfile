@@ -29,7 +29,6 @@ WORKDIR /var/www/html
 
 RUN curl -L -o suitecrm.zip https://github.com/SuiteCRM/SuiteCRM-Core/releases/download/v${SUITECRM_VERSION}/SuiteCRM-${SUITECRM_VERSION}.zip && \
     unzip suitecrm.zip -d /var/www/html/ && \
-    mv /var/www/html/SuiteCRM-${SUITECRM_VERSION}/* /var/www/html/ && \
     rm suitecrm.zip && \
     find . -type d -not -perm 2755 -exec chmod 2755 {} \; && \
     find . -type f -not -perm 0644 -exec chmod 0644 {} \; && \
