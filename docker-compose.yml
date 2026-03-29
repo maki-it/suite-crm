@@ -1,6 +1,10 @@
 services:
   app:
-    build: .
+    build:
+     context: .
+     dockerfile: Dockerfile
+     args:
+       - SUITECRM_VERSION=8.9.3
     pull_policy: build
     ports:
       - "80:80"

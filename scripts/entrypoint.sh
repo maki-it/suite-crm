@@ -55,9 +55,10 @@ if is_installed; then
         echo "No update needed. SuiteCRM is up to date."
     fi
 else
-    echo "Installing SuiteCRM..."
-    cp -R ${APPDIR}/* ${WEBROOT}/
-    chown -R www-data:www-data ${WEBROOT}
+    echo "Installing SuiteCRM v${SUITECRM_VERSION}..."
+    cp -R ${APPDIR}/. ${WEBROOT}
+    echo "Setting up permissions..."
+    set_permissions
     echo "SuiteCRM installed successfully."
 fi
 
