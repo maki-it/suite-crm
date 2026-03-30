@@ -2,7 +2,7 @@
 FROM php:8.3-apache
 
 # https://github.com/SuiteCRM/SuiteCRM-Core/releases
-ARG SUITECRM_VERSION=8.9.2
+ARG SUITECRM_VERSION=8.9.3
 ARG APPDIR=/opt/suitecrm
 ARG WEBROOT=/var/www/html
 
