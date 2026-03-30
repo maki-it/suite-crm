@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>maki-it/renovate-config:default.json5"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "(^|/)Dockerfile$",
+        "(^|/)docker-compose\\.yml$"
+      ],
+      "matchStrings": [
+        "ARG SUITECRM_VERSION=(?<currentValue>.*?)\\n",
+        "SUITECRM_VERSION: (?<currentValue>.*?)\\n"
+      ],
+      "extractVersionTemplate": "^v(?<version>.*)$",
+      "depNameTemplate": "SuiteCRM/SuiteCRM-Core",
+      "datasourceTemplate": "github-releases"
+    }
+  ]
+}
