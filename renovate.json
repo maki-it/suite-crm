@@ -6,9 +6,9 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "(^|/)Dockerfile$",
-        "(^|/)docker-compose\\.yml$"
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile$/",
+        "/(^|/)docker-compose\.yml$/"
       ],
       "matchStrings": [
         "ARG SUITECRM_VERSION=(?<currentValue>.*?)\\n",
@@ -20,8 +20,8 @@
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "^\\.github/workflows/build.yml$"
+      "managerFilePatterns": [
+        "/^\.github/workflows/build.yml$/"
       ],
       "matchStrings": [
         "SUITECRM_VERSION: (?<currentValue>.*?)\\n"
