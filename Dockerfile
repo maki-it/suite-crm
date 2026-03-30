@@ -2,11 +2,12 @@
 FROM php:8.3-apache
 
 # https://github.com/SuiteCRM/SuiteCRM-Core/releases
-ARG SUITECRM_VERSION=8.9.3
+ARG SUITECRM_VERSION=8.9.2
 ARG APPDIR=/opt/suitecrm
 ARG WEBROOT=/var/www/html
 
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         cron \
         curl \
@@ -27,15 +28,9 @@ RUN curl -fsSL -o /usr/local/bin/install-php-extensions https://github.com/mloca
         xdebug \
         zip
 
-WORKDIR ${APPDIR}
-
-RUN curl -L -o suitecrm.zip https://github.com/SuiteCRM/SuiteCRM-Core/releases/download/v${SUITECRM_VERSION}/SuiteCRM-${SUITECRM_VERSION}.zip && \
-    unzip suitecrm.zip -d ${APPDIR}/ && \
-    rm suitecrm.zip && \
-    find . -type d -not -perm 2755 -exec chmod 2755 {} \; && \
-    find . -type f -not -perm 0644 -exec chmod 0644 {} \; && \
-    find . ! -user www-data -exec chown www-data:www-data {} \; && \
-    chmod +x bin/console
+RUN mkdir -p ${APPDIR} && \
+    curl -L -o ${APPDIR}/SuiteCRM-${SUITECRM_VERSION}.zip \
+    https://github.com/SuiteCRM/SuiteCRM-Core/releases/download/v${SUITECRM_VERSION}/SuiteCRM-${SUITECRM_VERSION}.zip
 
 COPY config/php/php.ini /usr/local/etc/php/conf.d/
 COPY config/apache/sites.conf /etc/apache2/sites-enabled/000-default.conf
@@ -43,7 +38,7 @@ COPY config/apache/sites.conf /etc/apache2/sites-enabled/000-default.conf
 RUN a2enmod rewrite
 
 COPY config/cron/suitecrm /etc/cron.d/suitecrm
-COPY scripts/entrypoint.sh /
+COPY scripts/entrypoint.sh scripts/lib.sh /
 
 ENTRYPOINT ["bash", "/entrypoint.sh"]
 
@@ -51,6 +46,8 @@ WORKDIR ${WEBROOT}
 VOLUME ${WEBROOT}
 
 ENV SUITECRM_VERSION=${SUITECRM_VERSION}
+ENV WEBROOT=${WEBROOT}
+ENV APPDIR=${APPDIR}
 
 EXPOSE 80
 

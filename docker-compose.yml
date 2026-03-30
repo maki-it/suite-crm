@@ -12,6 +12,8 @@ services:
       TZ: Europe/Berlin
     depends_on:
       - db
+    volumes:
+      - app_data:/var/www/html
   db:
     image: mariadb:latest
     environment:
@@ -26,3 +28,4 @@ services:
 
 volumes:
   db_data:
+  app_data:

@@ -1,64 +1,42 @@
 #!/usr/bin/env bash
 
-APPDIR="/opt/suitecrm"
-WEBROOT="/var/www/html"
+set -euo pipefail
 
-set -e
-
-is_installed() {
-    if [ ! -f "${WEBROOT}/VERSION" ]; then
-      return 1
-    else
-      return 0
-    fi
-}
-
-is_latest_version() {
-    local installed_version
-
-    if [ -f "${WEBROOT}/VERSION" ]; then
-        installed_version=$(cat "${WEBROOT}/VERSION")
-        local app_version=${SUITECRM_VERSION}
-        if [ "$installed_version" != "$app_version" ]; then
-            echo "Version mismatch: Installed version is $installed_version, but expected $app_version."
-            return 1
-        else
-            echo "Version check passed: Installed version is $installed_version."
-            return 0
-        fi
-    else
-        echo "VERSION file not found in ${WEBROOT}."
-        return 1
-    fi
-}
-
-set_permissions() {
-    find . -type d -not -perm 2755 -exec chmod 2755 {} \; && \
-    find . -type f -not -perm 0644 -exec chmod 0644 {} \; && \
-    find . ! -user www-data -exec chown www-data:www-data {} \; && \
-    chmod +x bin/console
-}
+source /lib.sh
 
 if is_installed; then
     echo "SuiteCRM is already installed."
+
     if ! is_latest_version; then
-        echo "Updating SuiteCRM to version ${SUITECRM_VERSION}..."
-        mkdir -p ${WEBROOT}/tmp/package/upgrade/${SUITECRM_VERSION}
-        ln -s ${APPDIR}/* ${WEBROOT}/tmp/package/upgrade/${SUITECRM_VERSION}
-        ./bin/console suitecrm:app:upgrade -t ${SUITECRM_VERSION}
+        echo "Upgrading SuiteCRM to version ${SUITECRM_VERSION}..."
+
+        mkdir -p "${WEBROOT}/tmp/package/upgrade/${SUITECRM_VERSION}"
+
+        mv "${APPDIR}/SuiteCRM-${SUITECRM_VERSION}.zip" "${WEBROOT}/tmp/package/upgrade/SuiteCRM-${SUITECRM_VERSION}.zip"
+
+        ${WEBROOT}/bin/console suitecrm:app:upgrade --no-interaction --target-version="SuiteCRM-${SUITECRM_VERSION}"
+
         set_permissions
-        ./bin/console suitecrm:app:upgrade-finalize -t ${SUITECRM_VERSION}
+
+        ${WEBROOT}/bin/console suitecrm:app:upgrade-finalize --no-interaction --target-version="SuiteCRM-${SUITECRM_VERSION}"
+
         set_permissions
-        rm -rf ${WEBROOT}/tmp/package/upgrade
+
+        rm -rf "${WEBROOT}/tmp/package/upgrade"
+
         echo "SuiteCRM updated successfully."
     else
         echo "No update needed. SuiteCRM is up to date."
     fi
 else
     echo "Installing SuiteCRM v${SUITECRM_VERSION}..."
-    cp -R ${APPDIR}/. ${WEBROOT}
+
+    unzip -q "${APPDIR}/SuiteCRM-${SUITECRM_VERSION}.zip" -d "${WEBROOT}"
+
     echo "Setting up permissions..."
+
     set_permissions
+
     echo "SuiteCRM installed successfully."
 fi
 
