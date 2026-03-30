@@ -20,6 +20,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      SUITECRM_VERSION: 8.9.2
 
     steps:
       - name: Check out the repository
@@ -41,13 +43,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}},value=${{ env.SUITECRM_VERSION }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.SUITECRM_VERSION }}
+            type=semver,pattern={{major}},value=${{ env.SUITECRM_VERSION }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
@@ -61,3 +59,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            SUITECRM_VERSION=${{ env.SUITECRM_VERSION }}

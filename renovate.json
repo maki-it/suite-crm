@@ -17,6 +17,17 @@
       "extractVersionTemplate": "^v(?<version>.*)$",
       "depNameTemplate": "SuiteCRM/SuiteCRM-Core",
       "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "^\\.github/workflows/build.yml$"
+      ],
+      "matchStrings": [
+        "SUITECRM_VERSION: (?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "SuiteCRM/SuiteCRM-Core",
+      "datasourceTemplate": "github-releases"
     }
   ]
 }
