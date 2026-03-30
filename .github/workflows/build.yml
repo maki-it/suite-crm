@@ -21,7 +21,7 @@ jobs:
       contents: read
       packages: write
     env:
-      SUITECRM_VERSION: 8.9.2
+      SUITECRM_VERSION: 8.9.3
 
     steps:
       - name: Check out the repository
