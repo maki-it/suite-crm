@@ -1,5 +1,5 @@
 # https://docs.suitecrm.com/8.x/admin/compatibility-matrix/
-FROM php:8.3-apache
+FROM php:8.5-apache
 
 # https://github.com/SuiteCRM/SuiteCRM-Core/releases
 ARG SUITECRM_VERSION=8.9.3
